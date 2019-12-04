@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import generic, expression, tokens, nmlop, unit
-from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, general, grf, item, loop, produce, tracktypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites, base_graphics, override, sort_vehicles
+from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, general, grf, item, loop, produce, tracktypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites, base_graphics, override, sort_vehicles, macro
 from nml.actions import actionD, real_sprite
 import ply.yacc as yacc
 
@@ -113,7 +113,8 @@ class NMLParser:
                       | snowline
                       | engine_override
                       | sort_vehicles
-                      | basecost'''
+                      | basecost
+                      | macro'''
         t[0] = t[1]
 
     #
@@ -221,6 +222,10 @@ class NMLParser:
     #
     # Commonly used non-terminals that are not expressions
     #
+    def p_macro(self, t):
+        'macro : MACRO ID LPAREN id_list RPAREN expression SEMICOLON'
+        t[0] = macro.Macro(t[2], t[4], t[6], t[2].pos)
+
     def p_assignment_list(self, t):
         '''assignment_list : assignment
                            | param_desc

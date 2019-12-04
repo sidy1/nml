@@ -1236,6 +1236,7 @@ item_names = {}
 settings = {}
 named_parameters = {}
 spritegroups = {'CB_FAILED': 'CB_FAILED'}
+macros = {}
 
 const_list = [
     constant_numbers,
@@ -1252,6 +1253,7 @@ const_list = [
     (config_flags, config_flag),
     (unified_maglev_var, unified_maglev),
     (spritegroups, create_spritegroup_ref),
+    (macros, lambda info, pos: info),
 ]
 
 def print_stats():
