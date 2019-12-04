@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 import sys, re
 import ply.lex as lex
-from nml import expression, generic
+from nml import expression, generic, generated
 
 reserved = {
     'grf' :                 'GRF',
@@ -243,11 +243,18 @@ class NMLLexer:
 
 
 
-    def build(self):
+    def build(self, rebuild = False):
         """
         Initial construction of the scanner.
         """
-        self.lexer = lex.lex(module=self, optimize=1, lextab='nml.generated.lextab')
+        lextabfile = 'nml.generated.lextab'
+        if rebuild:
+            try:
+                import os
+                os.remove(os.path.normpath(os.path.join(os.path.dirname(__file__), "generated", "lextab.py")))
+            except FileNotFoundError:
+                pass
+        self.lexer = lex.lex(module=self, optimize=1, lextab=lextabfile)
 
 
     def setup(self, text, fname):
