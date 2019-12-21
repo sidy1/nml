@@ -124,3 +124,6 @@ class StorageOp(Expression):
 
     def collect_references(self):
         return self.register.collect_references() + (self.value.collect_references() if self.value is not None else [])
+
+    def is_read_only(self):
+        return (not self.info['store']) and self.register.is_read_only() and (self.value.is_read_only() if self.value is not None else True)

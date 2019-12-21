@@ -44,6 +44,9 @@ class BinNot(Expression):
     def collect_references(self):
         return self.expr.collect_references()
 
+    def is_read_only(self):
+        return self.expr.is_read_only()
+
     def __str__(self):
         return "~" + str(self.expr)
 
@@ -79,8 +82,13 @@ class Not(Expression):
     def supported_by_actionD(self, raise_error):
         return self.expr.supported_by_actionD(raise_error)
 
+<<<<<<< HEAD
     def collect_references(self):
         return self.expr.collect_references()
+=======
+    def is_read_only(self):
+        return self.expr.is_read_only()
+>>>>>>> 42af63b... Add: is_read_only()
 
     def is_boolean(self):
         return True
