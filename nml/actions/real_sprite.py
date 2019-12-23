@@ -219,6 +219,9 @@ class RealSprite:
         ret += "]"
         return ret
 
+    def __eq__(self, other):
+        return isinstance(other, RealSprite) and self.param_list == other.param_list
+
     def get_cache_key(self, crop_sprites):
         """
         Assemble the sprite meta data into a key, able to identify the sprite.
@@ -402,9 +405,16 @@ class TemplateUsage:
 
         return parse_sprite_list(template.sprite_list, default_file, default_mask_file, poslist + [self.pos], param_dict)
 
+    def reduce(self):
+        template = sprite_template_map[self.name.value]
+        if isinstance(template, str):
+            self.name.value = sprite_template_map[template].name.value
+
     def __str__(self):
         return "{}({})".format(self.name, ", ".join(str(param) for param in self.param_list))
 
+    def __eq__(self, other):
+        return isinstance(other, TemplateUsage) and self.name.value == other.name.value and self.param_list == other.param_list
 
 def parse_real_sprite(sprite, default_file, default_mask_file, poslist, id_dict):
     # check the number of parameters

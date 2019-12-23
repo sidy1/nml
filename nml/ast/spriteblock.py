@@ -33,9 +33,19 @@ class TemplateDeclaration(base_statement.BaseStatement):
                     raise generic.ScriptError("Sprite template '{}' includes itself.".format(sprite.name.value), self.pos)
                 elif sprite.name.value not in real_sprite.sprite_template_map:
                     raise generic.ScriptError("Encountered unknown template identifier: " + sprite.name.value, sprite.pos)
+                else:
+                    sprite.reduce()
+        #Check for duplicates
+        target = self
+        for template in real_sprite.sprite_template_map.values():
+            if not isinstance(template, TemplateDeclaration): continue
+            if self.sprite_list == template.sprite_list:
+                generic.print_warning("Template '{}' is a duplicate of template '{}' defined at {}, optimising.".format(self.name.value, template.name.value, template.pos), self.pos)
+                target = template.name.value
+                break
         #Register template
         if self.name.value not in real_sprite.sprite_template_map:
-            real_sprite.sprite_template_map[self.name.value] = self
+            real_sprite.sprite_template_map[self.name.value] = target
         else:
             raise generic.ScriptError("Template named '{}' is already defined, first definition at {}".format(self.name.value, real_sprite.sprite_template_map[self.name.value].pos), self.pos)
 
@@ -98,6 +108,8 @@ class SpriteSet(spriteset_base_class, sprite_container.SpriteContainer):
         spriteset_base_class.pre_process(self)
         offset = 0
         for sprite in self.sprite_list:
+            if isinstance(sprite, real_sprite.TemplateUsage):
+                sprite.reduce()
             sprite_labels, num_sprites = sprite.get_labels()
             for lbl, lbl_offset in sprite_labels.items():
                 if lbl in self.labels:
