@@ -76,6 +76,9 @@ class SpriteGroupRef(Expression):
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         if self.name.value != 'CB_FAILED':
             spritegroup = action2.resolve_spritegroup(self.name)
+            if isinstance(spritegroup, str):
+                self.name.value = spritegroup
+                spritegroup = action2.resolve_spritegroup(self.name)
             if isinstance(spritegroup, switch.Switch) and spritegroup.expr.is_read_only() and \
                     spritegroup.body.default is not None and spritegroup.body.default.value is not None and \
                     len(spritegroup.body.ranges) == 0:

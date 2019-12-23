@@ -116,6 +116,14 @@ class SpriteSet(spriteset_base_class, sprite_container.SpriteContainer):
                     raise generic.ScriptError("Duplicate label encountered; '{}' already exists.".format(lbl), self.pos)
                 self.labels[lbl] = lbl_offset + offset
             offset += num_sprites
+        for spritegroup in action2.spritegroup_list.values():
+            #spritesets are registered before pre_process, if we find ourself we're not a duplicate
+            if spritegroup == self: break
+            if not isinstance(spritegroup, SpriteSet): continue
+            if str(self.image_file) == str(spritegroup.image_file) and self.sprite_list == spritegroup.sprite_list:
+                generic.print_warning("Spriteset '{}' is a duplicate of spriteset '{}' defined at {}, optimising.".format(self.name.value, spritegroup.name.value, spritegroup.pos), self.pos)
+                action2.spritegroup_list[self.name.value] = spritegroup.name.value
+                break
 
     def collect_references(self):
         return []
