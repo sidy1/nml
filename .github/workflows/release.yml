@@ -43,6 +43,7 @@ jobs:
         build-requirements: '-e .'  # pip args
 
     - name: Publish manylinux Python wheels
+      if: false
       env:
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
@@ -90,7 +91,7 @@ jobs:
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
         python setup.py sdist bdist_wheel
-        twine upload --username __token__ dist/*.whl dist/*.tar.gz
+        #twine upload --username __token__ dist/*.whl dist/*.tar.gz
         version=`python setup.py --version`
         archive=`echo "nml-$version.tar.gz"`
         echo "::set-output name=archive::$archive"
@@ -143,7 +144,7 @@ jobs:
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
         python setup.py bdist_wheel
-        twine upload --username __token__ dist/*.whl
+        #twine upload --username __token__ dist/*.whl
 
     - name: Build standalone executable
       run: |
