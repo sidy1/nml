@@ -131,3 +131,9 @@ class FreeNumberList:
         self.states[-1].reverse()
         self.free_numbers.extend(self.states[-1])
         self.states.pop()
+
+    def discard(self, num):
+        assert(len(self.used_numbers) == 0)
+        if num in self.free_numbers:
+            self.free_numbers.remove(num)
+            self.total_amount -= 1

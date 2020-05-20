@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import expression, generic, grfstrings, global_constants
-from nml.actions import action8, action14
+from nml.actions import action6, action8, action14
 from nml.ast import base_statement
 
 palette_node = None
@@ -25,7 +25,7 @@ Statistics about registers used for parameters.
 The 1st field is the largest parameter register used.
 The 2nd field is the maximum amount of parameter registers available. This is where L{action6.free_parameters} begins.
 """
-param_stats = [0, 0x40]
+param_stats = [0, 0x80]
 
 def print_stats():
     """
@@ -304,6 +304,7 @@ class ParameterDescription:
     def pre_process(self, num):
         if self.num is None: self.num = num
         self.num = self.num.reduce_constant()
+        action6.free_parameters.discard(self.num.value)
         for setting in self.setting_list:
             setting.pre_process()
         for setting in self.setting_list:
