@@ -58,6 +58,12 @@ class FreeNumberList:
         self.exception = exception
         self.exception_unique = exception_unique
 
+    def _add_used(self, num, pos):
+        self.used_numbers.add(num)
+        num_used = len(self.used_numbers)
+        if num_used > self.stats[0]:
+            self.stats = (num_used, pos)
+
     def pop(self, pos):
         """
         Pop a free number from the list. You have to call L{save} at least
@@ -73,12 +79,7 @@ class FreeNumberList:
             raise generic.ScriptError(self.exception, pos)
         num = self.free_numbers.pop()
         self.states[-1].append(num)
-        self.used_numbers.add(num)
-
-        num_used = len(self.used_numbers)
-        if num_used > self.stats[0]:
-            self.stats = (num_used, pos)
-
+        self._add_used(num, pos)
         return num
 
     def pop_global(self, pos):
@@ -93,7 +94,9 @@ class FreeNumberList:
         """
         if len(self.free_numbers) == 0:
             raise generic.ScriptError(self.exception, pos)
-        return self.free_numbers.pop()
+        num = self.free_numbers.pop()
+        self._add_used(num, pos)
+        return num
 
     def pop_unique(self, pos):
         """
@@ -108,12 +111,7 @@ class FreeNumberList:
         for num in reversed(self.free_numbers):
             if num in self.used_numbers: continue
             self.free_numbers.remove(num)
-            self.used_numbers.add(num)
-
-            num_used = len(self.used_numbers)
-            if num_used > self.stats[0]:
-                self.stats = (num_used, pos)
-
+            self._add_used(num, pos)
             return num
         raise generic.ScriptError(self.exception_unique, pos)
 
