@@ -78,6 +78,12 @@ class Action2(base_action.BaseAction):
     @ivar references: All Action2s that are referenced by this Action2.
     @type references: C{list} of L{Action2Reference}
 
+    @ivar referencing: All Action2s or Action3s referencing this Action2.
+    @type referencing: C{list} of L{Action2} or L{Action3}
+
+    @ivar used: True iff this action2 is used.
+    @type used: C{bool}, or C{None} if usage has not been checked yet.
+
     @ivar tmp_locations: List of address in the temporary storage that are free
                          to be used in this varaction2.
     @type tmp_locations: C{list} of C{int}
@@ -90,6 +96,8 @@ class Action2(base_action.BaseAction):
         self.num_refs = 0
         self.id = None
         self.references = []
+        self.referencing = []
+        self.used = None
         # 0x00 - 0x7F: available to user
         # 0x80 - 0xFE: used by NML
         # 0xFF: Used for some house variables
@@ -163,6 +171,16 @@ class Action2(base_action.BaseAction):
             if force_recursive or act2_ref.is_proc:
                 act2_ref.action2.remove_tmp_location(location, True)
 
+    def check_usage(self):
+        if self.used is None:
+            self.used = False
+            for ref in self.referencing:
+                if isinstance(ref, Action2):
+                    self.used |= ref.check_usage()
+                else:
+                    self.used = True
+        return self.used
+
 
 class Action2Reference:
     """
@@ -200,6 +218,7 @@ def add_ref(ref, source_action, reference_as_proc=False):
     # Add reference to list of references of the source action
     act2 = ref.act2 if ref.act2 is not None else resolve_spritegroup(ref.name).get_action2(source_action.feature)
     source_action.references.append(Action2Reference(act2, reference_as_proc))
+    act2.referencing.append(source_action)
     act2.num_refs += 1
 
 

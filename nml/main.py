@@ -422,6 +422,11 @@ def nml(
     for action in tmp_actions:
         if isinstance(action, action1.SpritesetCollection):
             actions.extend(action.get_action_list())
+        elif isinstance(action, action2.Action2):
+            if action.check_usage():
+                actions.append(action)
+            else:
+                action2.free_references(action)
         else:
             actions.append(action)
     actions.extend(action11.get_sound_actions())
