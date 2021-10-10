@@ -62,7 +62,7 @@ class FunctionCall(Expression):
                 if func_ptr.type() == Type.SPRITEGROUP_REF:
                     func_ptr.param_list = params
                     func_ptr.is_procedure = True
-                    return func_ptr
+                    return func_ptr.reduce(id_dicts)
                 if func_ptr.type() != Type.FUNCTION_PTR:
                     raise generic.ScriptError(
                         "'{}' is defined, but it is not a function.".format(self.name.value), self.pos

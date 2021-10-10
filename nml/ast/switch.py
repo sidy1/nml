@@ -101,7 +101,7 @@ class Switch(switch_base_class):
         if (
             self.optimised
             and not isinstance(self.optimised, expression.ConstantNumeric)
-            and not (isinstance(self.optimised, expression.SpriteGroupRef) and not self.optimised.is_procedure)
+            and not (isinstance(self.optimised, expression.SpriteGroupRef) and not self.optimised.param_list)
             and not isinstance(self.optimised, expression.String)
         ):
             self.expr = self.optimised

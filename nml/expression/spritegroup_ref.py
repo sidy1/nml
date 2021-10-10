@@ -80,9 +80,12 @@ class SpriteGroupRef(Expression):
         return spritegroup.get_action2(feature).id
 
     def reduce(self, id_dicts=None, unknown_id_fatal=True):
-        if self.name.value != "CB_FAILED" and not self.is_procedure:
+        if self.name.value != "CB_FAILED":
             spritegroup = action2.resolve_spritegroup(self.name)
             if spritegroup.optimise():
+                # Transfer is_procedure flag if needed
+                if isinstance(spritegroup.optimised, SpriteGroupRef) and self.is_procedure:
+                    spritegroup.optimised.is_procedure = True
                 return spritegroup.optimised
         return self
 

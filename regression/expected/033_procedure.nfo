@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d13
+0 * 4 \d12
 
 1 * 54 14 "C" "INFO"
 "B" "VRSN" \w4 \dx00000000
@@ -25,7 +25,8 @@
 \b0
 \wx8000 // Return computed value
 
-// Name: @return_action_0
+// Name: callee
+// a : register 86
 4 * 66 02 0A FE 89
 1A 20 \dx00000005
 \2sto 1A 20 \dx00000088
@@ -38,22 +39,8 @@
 \b0
 \wx8000 // Return computed value
 
-// Name: callee
-// a : register 86
-5 * 67 02 0A FE 89
-45 30 \dx00000003
-\2+ 45 38 \dx0000000F
-\2sto 1A 20 \dx00000087
-\2r 43 20 \dxFFFFFFFF
-\2+ 44 20 \dx000000FF
-\2* 7D 87 20 \dxFFFFFFFF
-\2+ 7D 86 00 \dxFFFFFFFF 	// a
-\b1
-\wx8000 \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
-\wx00FE // default: return (a + dumb_add(5, a))
-
 // Name: caller2
-6 * 232 02 0A FD 89
+5 * 232 02 0A FD 89
 B3 20 \dx00000003
 \2+ AA 20 \dx0000FFFF
 \2sto 1A 20 \dx00000080
@@ -89,7 +76,7 @@ B3 20 \dx00000003
 \wx8000 // Return computed value
 
 // Name: caller1
-7 * 145 02 0A FF 89
+6 * 145 02 0A FF 89
 B3 20 \dx00000003
 \2+ AA 20 \dx0000FFFF
 \2sto 1A 20 \dx00000080
@@ -112,32 +99,32 @@ B3 20 \dx00000003
 \b0
 \wx8000 // Return computed value
 
-8 * 11 00 0A \b2 01 FF \wx0000
+7 * 11 00 0A \b2 01 FF \wx0000
 08 00
 09 00
 
-9 * 11 00 0A \b2 01 FF \wx0000
+8 * 11 00 0A \b2 01 FF \wx0000
 21 00
 22 42
 
 // Name: @CB_FAILED_PROD
-10 * 15 02 0A FE 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00
+9 * 15 02 0A FE 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00
 
 // Name: @CB_FAILED0A
-11 * 23 02 0A FE 89
+10 * 23 02 0A FE 89
 0C 00 \dx0000FFFF
 \b1
 \wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
 \wx00FE // Non-graphics callback, return graphics result
 
 // Name: @action3_0
-12 * 33 02 0A FE 89
+11 * 33 02 0A FE 89
 0C 00 \dx0000FFFF
 \b2
 \wx00FD \dx0000003B \dx0000003B 	// caller2;
 \wx00FF \dx0000015F \dx0000015F 	// caller1;
 \wx00FE // @CB_FAILED0A;
 
-13 * 7 03 0A 01 00 \b0
+12 * 7 03 0A 01 00 \b0
 \wx00FE 	// @action3_0;
 
