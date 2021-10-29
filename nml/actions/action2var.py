@@ -55,6 +55,8 @@ class Action2Var(action2.Action2):
 
         for var in self.param_registers + self.var_list:  # Allocate param registers first
             if isinstance(var, (VarAction2StoreTempVar, VarAction2CallParam)):
+                if isinstance(var, VarAction2CallParam) and var.register:
+                    continue
                 if not self.tmp_locations:
                     raise generic.ScriptError(
                         "There are not enough registers available "
@@ -194,10 +196,13 @@ class VarAction2Var:
 # Class for var 7E procedure calls
 class VarAction2ProcCallVar(VarAction2Var):
     def __init__(self, sg_ref):
-        if not isinstance(action2.resolve_spritegroup(sg_ref.name), (switch.Switch, switch.RandomSwitch)):
-            raise generic.ScriptError("Block with name '{}' is not a valid procedure".format(sg_ref.name), sg_ref.pos)
-        if not sg_ref.is_procedure:
-            raise generic.ScriptError("Unexpected identifier encountered: '{}'".format(sg_ref.name), sg_ref.pos)
+        if not sg_ref.act2:
+            if not isinstance(action2.resolve_spritegroup(sg_ref.name), (switch.Switch, switch.RandomSwitch)):
+                raise generic.ScriptError(
+                    "Block with name '{}' is not a valid procedure".format(sg_ref.name), sg_ref.pos
+                )
+            if not sg_ref.is_procedure:
+                raise generic.ScriptError("Unexpected identifier encountered: '{}'".format(sg_ref.name), sg_ref.pos)
         VarAction2Var.__init__(self, 0x7E, 0, 0, comment=str(sg_ref))
         # Reference to the called action2
         self.sg_ref = sg_ref
