@@ -310,6 +310,7 @@ varact2vars_stations = {
     'rail_continuation'        : {'var': 0x45, 'start':  0, 'size': 8},
     'rail_present'             : {'var': 0x45, 'start':  8, 'size': 8},
     'animation_frame'          : {'var': 0x4A, 'start':  0, 'size': 8},
+    'random_bits'              : {'var': 0x5F, 'start': 8, 'size': 20},
 }
 
 # Mapping of param values for platform_xx vars to variable numbers
@@ -709,6 +710,7 @@ varact2vars_airporttiles = {
     'relative_y'        : {'var': 0x43, 'start': 8, 'size':  8},
     'relative_pos'      : {'var': 0x43, 'start': 0, 'size': 16},
     'animation_frame'   : {'var': 0x44, 'start': 0, 'size':  8},
+    'random_bits'       : {'var': 0x5F, 'start': 8, 'size': 20},
 }
 
 varact2vars60x_airporttiles = {
