@@ -42,69 +42,9 @@ jobs:
         python-versions: 'cp36-cp36m cp37-cp37m cp38-cp38'
         build-requirements: '-e .'  # pip args
 
-    - name: Publish manylinux Python wheels
-      env:
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      run: |
-        twine upload --username __token__ wheelhouse/*-manylinux*.whl
 
 
-  release-osx:
-    name: MacOS release
-    runs-on: macOS-latest
 
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-
-    - name: Checkout tags
-      uses: openttd/actions/checkout@v1
-      with:
-        with-tags: true
-
-    - uses: actions/cache@v1
-      with:
-        path: ~/Library/Caches/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-
-    - name: Set up Python
-      uses: actions/setup-python@v1
-      with:
-        python-version: '3.x'
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install setuptools wheel twine
-        pip install -e .
-
-    # Only publish source package on one OS, to prevent PyPI file conflicts.
-    # Use MacOS rather than Windows to get LF rather than CRLF line endings
-    # (useful for Debian source packages), and MacOS rather than Linux, since
-    # the latter has a different build process.
-    - name: Build and publish wheel and source distribution
-      env:
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      run: |
-        python setup.py sdist bdist_wheel
-        twine upload --username __token__ dist/*.whl dist/*.tar.gz
-        version=`python setup.py --version`
-        archive=`echo "nml-$version.tar.gz"`
-        echo "::set-output name=archive::$archive"
-      id: nml_source_archive
-
-    - name: Publish source tarball
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./dist/${{ steps.nml_source_archive.outputs.archive }}
-        asset_name: ${{ steps.nml_source_archive.outputs.archive }}
-        asset_content_type: application/gzip
 
   release-windows:
     name: Windows release
@@ -138,12 +78,7 @@ jobs:
         pip install setuptools wheel twine pyinstaller
         pip install -e .
 
-    - name: Build and publish wheel
-      env:
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      run: |
-        python setup.py bdist_wheel
-        twine upload --username __token__ dist/*.whl
+
 
     - name: Build standalone executable
       run: |
